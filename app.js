@@ -3,6 +3,7 @@ const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const cors = require('cors');
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -20,8 +21,9 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const SimplePeer = require('simple-peer');
-const port = 3000;
+const port = 3001;
 
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
