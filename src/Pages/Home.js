@@ -1,7 +1,11 @@
+import Hero from "../Components/Hero";
+import Navbar from "../Components/Navbar";
+
 export default function Home(){
     return(
         <div>
-            <h2>Home!</h2>
+            <Navbar/>
+            <Hero/>
         </div>
     )
 }
