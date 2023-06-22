@@ -2,6 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react"
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
+import { connectionWithWebSocket, registerNewUser } from "../utils/wssconnection/wssconnection";
 
 export default function PrivateRoutes(){
     const [isAuth,setIsAuth] = useState()
@@ -15,8 +16,11 @@ export default function PrivateRoutes(){
                 headers:{
                     Authorization:`Bearer ${token}`
                 }
-            }).then(()=>{
+            }).then((res)=>{
                 setIsAuth(true)
+            }).catch((e)=>{
+                console.log(e)
+                setIsAuth(false)
             })
         }else{
             setIsAuth(false)
