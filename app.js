@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
+const socket = require('socket.io');
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -19,8 +20,6 @@ connection.connect((err) => {
 
 const app = express();
 const http = require('http').Server(app);
-const io = require('socket.io')(http);
-const SimplePeer = require('simple-peer');
 const port = 3001;
 
 app.use(cors());
@@ -98,55 +97,46 @@ app.get('/check-token', (req, res) => {
 
 //WebRTC
 
-io.on('connection', (socket) => {
-    // When a client wants to initiate a call
-    socket.on('call', (offer) => {
-      const peer = new SimplePeer({ initiator: false });
-  
-      peer.on('signal', (answer) => {
-        // Send the answer to the calling client
-        socket.emit('answer', answer);
-      });
-  
-      // Handle video and audio streams
-      socket.on('stream', (stream) => {
-        const video = document.getElementById('remoteVideo');
-  
-        // Attach the remote stream to a video element
-        video.srcObject = stream;
-        video.play();
-      });
-  
-      // Handle incoming ICE candidates
-      socket.on('candidate', (candidate) => {
-        // Add the candidate to the peer connection
-        peer.addIceCandidate(candidate);
-      });
-  
-      // When the connection is established
-      peer.on('connect', () => {
-        // Perform any necessary actions when the connection is established
-      });
-  
-      // When the remote peer stream is available
-      peer.on('stream', (stream) => {
-        // Handle the incoming stream, e.g., display it in the UI
-        socket.emit('stream', stream);
-      });
-  
-      // When an ICE candidate is available
-      peer.on('iceCandidate', (candidate) => {
-        // Send the candidate to the other peer
-        socket.emit('candidate', candidate);
-      });
-  
-      // Process the offer from the calling client
-      peer.signal(offer);
-    });
-  });
-  
-  
-
-app.listen(port, () => {
+let peers = [];
+const broadcastEventTypes = {
+  ACTIVE_USERS:'ACTIVE_USERS'
+}
+const server = app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
+const io = socket(server,{
+  cors: {
+    origin:'*',
+    methods:['GET','POST']
+  }
+})
+
+io.on('connection',(socket)=>{
+  socket.emit('connection',null)
+  console.log('new user connected')
+  console.log(socket.id)
+
+  socket.on('register-new-user',(data)=>{
+    peers.push({
+      username:data.username,
+      socket:data.socketId
+    })
+    console.log('registered new user')
+    console.log(peers)
+
+    io.sockets.emit('broadcast',{
+      event: broadcastEventTypes.ACTIVE_USERS,
+      activeUsers:peers
+    })
+  })
+
+  socket.on('disconnect',()=>{
+    console.log('user disconnected!')
+    peers = peers.filter(peer => peer.socketId !== socket.id)
+    io.sockets.emit('broadcast',{
+      event: broadcastEventTypes.ACTIVE_USERS,
+      activeUsers:peers
+    })
+  })
+})
