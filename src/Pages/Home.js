@@ -1,16 +1,21 @@
 import { useEffect } from "react";
 import Hero from "../Components/Hero";
 import Navbar from "../Components/Navbar";
-import { connectionWithWebSocket } from "../utils/wssconnection/wssconnection";
-import ActiveUsers from "../users/ActiveUsers";
+import { connect } from "react-redux";
 
-export default function Home(){
 
+function Home({ username }){
     return(
         <div>
             <Navbar/>
-            <Hero/>
-            <ActiveUsers/>
+            <Hero user={username}/>
         </div>
     )
 }
+
+const mapStateToProps = ({ dashboard }) =>({
+    ...dashboard,
+});
+
+
+export default connect(mapStateToProps)(Home)

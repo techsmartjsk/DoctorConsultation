@@ -7,7 +7,7 @@ function ActiveUsers({ activeUsers }){
                 activeUsers.map((user)=>{
                     return <ActiveUserItem
                     key={user.socket}
-                    user={user.username}
+                    user={user}
                     />
                 })
             }

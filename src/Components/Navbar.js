@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import Logo from '../assets/logo.png'
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function Navbar(){
     const cookieValue = Cookies.get('token');
     const [username,setUsername] = useState("")
     const [auth,setAuth] = useState(false);
+    const navigate = useNavigate()
 
     const { REACT_APP_API_ENDPOINT } = process.env;
 
@@ -17,6 +19,11 @@ export default function Navbar(){
             setAuth(false)
         }
     },[])
+
+    const handleLogOut = ()=>{
+        Cookies.remove('token')
+        navigate('/login')
+    }
 
     async function fetchToken(){
         const res = await axios.get(`${REACT_APP_API_ENDPOINT}/check-token`,{
@@ -54,7 +61,7 @@ export default function Navbar(){
                     </a>
                 </div> : <div className="flex gap-4 items-center justify-center">
                     <p>Hey, {username}</p>
-                    <a href='/mySpace' className="bg-[#055875] rounded-full hover:bg-white hover:text-[#055875] text-white px-4 py-2">My Space</a>
+                    <button onClick={handleLogOut} className="bg-[#055875] rounded-full hover:bg-white hover:text-[#055875] text-white px-4 py-2">LogOut</button>
                 </div>
                 }
             </div>

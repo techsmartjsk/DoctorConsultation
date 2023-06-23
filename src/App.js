@@ -5,9 +5,17 @@ import About from './Pages/About';
 import Login from './Pages/Login';
 import SignUp from './Pages/SignUp';
 import { ToastContainer, toast } from 'react-toastify';
-  import 'react-toastify/dist/ReactToastify.css';
+import 'react-toastify/dist/ReactToastify.css';
 import PrivateRoutes from './Routers/PrivateRoutes';
+import { useEffect } from 'react';
+import { connectionWithWebSocket } from './utils/wssconnection/wssconnection';
+import DoctorList from './Pages/DoctorList';
+import Consultation from './Pages/Consultation'
+
 function App() {
+  useEffect(()=>{
+      connectionWithWebSocket()
+  },[])
   return (
     <div className="App">
       <Router>
@@ -15,6 +23,8 @@ function App() {
           {/* Protected Routes */}
           <Route element={<PrivateRoutes/>}>
             <Route path='/' element={<Home/>}/>
+            <Route path='/findDoctors' element={<DoctorList/>}/>
+            <Route path='/consultation/:user' element={<Consultation/>}/>
           </Route>
 
           <Route path='/about' element={<About/>}/>

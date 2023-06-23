@@ -1,6 +1,8 @@
 import socketClient from 'socket.io-client'
 import store from '../../store/store';
 import * as dashboardActions from '../../store/actions/DashboardActions'
+import * as  webRTCHandler from '../../utils/webRTC/webRTCHandler'
+
 const { REACT_APP_API_ENDPOINT } = process.env;
 
 let socket;
@@ -18,19 +20,44 @@ export const connectionWithWebSocket = ()=>{
     socket.on('broadcast',(data)=>{
         handleBroadcastEvents(data)
     })
+
+    //listeners for direct call
+    socket.on('pre-offer',(data)=>{
+        console.log('Pre-Offer WSS',data)
+        webRTCHandler.handlePreOffer(data)
+    })
+
+    socket.on('pre-offer-answer',(data)=>{
+        webRTCHandler.handlePreOfferAnswer(data)
+    })
 }
 
 export const registerNewUser = (username) =>{
-    socket.emit('register-new-user',{
-        username:username,
-        socketId:socket.id
-    })
+    if (socket) {
+        socket.emit('register-new-user', {
+          username: username,
+          socketId: socket.id
+        });
+    } else {
+        console.log('Socket connection not established yet.');
+    }
+}
+
+
+//emitting events related to server with direct call
+export const sendPreOffer = (data)=>{
+    socket.emit('pre-offer',data)
+}
+
+export const sendPreOfferAnswer = (data)=>{
+    socket.emit('pre-offer-answer',data)
 }
 
 const handleBroadcastEvents = (data) =>{
     switch(data.event){
         case broadcastEventTypes.ACTIVE_USERS:
-            store.dispatch(dashboardActions.setActiveUsers(data.activeUsers));
+            const activeUsers = data.activeUsers.filter((user)=> user.socketId !== socket.id)
+            store.dispatch(dashboardActions.setActiveUsers(activeUsers));
             break;
 
         default:

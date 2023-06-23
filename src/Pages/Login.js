@@ -6,18 +6,13 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { setUsername } from '../store/actions/DashboardActions';
 import { connect } from 'react-redux'
-import { registerNewUser } from '../utils/wssconnection/wssconnection';
-import { connectionWithWebSocket } from '../utils/wssconnection/wssconnection';
+
 function Login({saveUsername}){
     const [user,setUser] = useState("");
     const [password,setPassword] = useState("");
     const [success,setSuccess] = useState(false);
     const { REACT_APP_API_ENDPOINT } = process.env;
     const navigate = useNavigate();
-
-    useEffect(()=>{
-        connectionWithWebSocket()
-    },[])
     
     async function SignIn(){
         const res = await axios.post(`${REACT_APP_API_ENDPOINT}/login/`,{
@@ -29,8 +24,8 @@ function Login({saveUsername}){
             setSuccess(true);
             Cookies.set('token',res.data['token'])
             toast.success('Logged In Successfully');
+            console.log(user)
             saveUsername(user)
-            registerNewUser(user)
             navigate('/')
         }else{
             setSuccess(false);

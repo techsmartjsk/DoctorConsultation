@@ -1,10 +1,11 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react"
+import { connect } from "react-redux";
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
-import { connectionWithWebSocket, registerNewUser } from "../utils/wssconnection/wssconnection";
+import { setUsername } from "../store/actions/DashboardActions";
 
-export default function PrivateRoutes(){
+function PrivateRoutes({saveUsername}){
     const [isAuth,setIsAuth] = useState()
     const { REACT_APP_API_ENDPOINT } = process.env;
     const token = Cookies.get('token')
@@ -17,7 +18,9 @@ export default function PrivateRoutes(){
                     Authorization:`Bearer ${token}`
                 }
             }).then((res)=>{
+                console.log(res.data['username'])
                 setIsAuth(true)
+                saveUsername(res.data['username'])
             }).catch((e)=>{
                 console.log(e)
                 setIsAuth(false)
@@ -37,3 +40,11 @@ export default function PrivateRoutes(){
     }
     return isAuth ? <Outlet/>:<Navigate to="/login"/>
 }
+
+const mapActionsToProps = (dispatch) =>{
+    return{
+        saveUsername: username=> dispatch(setUsername(username))
+    }
+}
+
+export default connect(null,mapActionsToProps)(PrivateRoutes)
