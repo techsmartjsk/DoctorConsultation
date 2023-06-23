@@ -114,17 +114,12 @@ const io = socket(server,{
 
 io.on('connection',(socket)=>{
   socket.emit('connection',null)
-  console.log('new user connected')
-  console.log(socket.id)
-
   socket.on('register-new-user',(data)=>{
     peers.push({
       username:data.username,
-      socket:data.socketId
+      socketId:data.socketId
     })
-    console.log('registered new user')
-    console.log(peers)
-
+   
     io.sockets.emit('broadcast',{
       event: broadcastEventTypes.ACTIVE_USERS,
       activeUsers:peers
@@ -132,11 +127,25 @@ io.on('connection',(socket)=>{
   })
 
   socket.on('disconnect',()=>{
-    console.log('user disconnected!')
     peers = peers.filter(peer => peer.socketId !== socket.id)
     io.sockets.emit('broadcast',{
       event: broadcastEventTypes.ACTIVE_USERS,
       activeUsers:peers
+    })
+  })
+
+
+  //listeners related with direct call
+  socket.on('pre-offer',(data)=>{
+    io.to(data.callee.socketId).emit('pre-offer',{
+      callerUsername:data.caller.username,
+      callerSocketId:socket.id
+    })
+  })
+
+  socket.on('pre-offer-answer',(data)=>{
+    io.to(data.callersocketId).emit('pre-offer-answer',{
+      answer:data.answer
     })
   })
 })
