@@ -3,10 +3,10 @@ import Logo from '../assets/logo.png'
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import store from '../store/store';
 
 export default function Navbar(){
     const cookieValue = Cookies.get('token');
-    const [username,setUsername] = useState("")
     const [auth,setAuth] = useState(false);
     const navigate = useNavigate()
 
@@ -34,7 +34,6 @@ export default function Navbar(){
 
         if(res.status != 401){
             setAuth(true)
-            setUsername(res.data['username'])
         }
     }
     return(
@@ -50,7 +49,7 @@ export default function Navbar(){
                 placeholder="Search"
                 className="p-2 border text-sm rounded-full w-[300px] border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300"
                 />
-                <a href="/about" className="text-white">About Us</a>
+                <a href="/about" className="hover:bg-white hover:text-[#055875] p-2 rounded-full">About Us</a>
                 {
                     !auth ? <div className="flex gap-4">
                     <a href="/signup" className="bg-white rounded-full hover:bg-[#30D5C8] hover:text-white text-[#30D5C8] px-4 py-2">
@@ -60,8 +59,8 @@ export default function Navbar(){
                         Login
                     </a>
                 </div> : <div className="flex gap-4 items-center justify-center">
-                    <p>Hey, {username}</p>
-                    <button onClick={handleLogOut} className="bg-[#055875] rounded-full hover:bg-white hover:text-[#055875] text-white px-4 py-2">LogOut</button>
+                    <p>Hey, {store.getState().dashboard.role == 'doctor' ? 'Dr. ': null} {store.getState().dashboard.name}</p>
+                    <button onClick={handleLogOut} className="bg-[#055875] rounded-full hover:bg-white hover:text-[#055875] text-white px-4 py-2">Logout</button>
                 </div>
                 }
             </div>

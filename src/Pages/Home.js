@@ -4,11 +4,11 @@ import Navbar from "../Components/Navbar";
 import { connect } from "react-redux";
 
 
-function Home({ username }){
+function Home({ username, name, role }){
     return(
         <div>
             <Navbar/>
-            <Hero user={username}/>
+            <Hero user={username} name={name} role={role} />
         </div>
     )
 }

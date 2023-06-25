@@ -1,13 +1,13 @@
 import { useEffect, useRef } from "react";
+import Navbar from "../Navbar";
 
 const LocalVideoView = props =>{
     const { localStream } = props;
     const localVideoRef = useRef()
-    console.log(localStream)
 
     useEffect(()=>{
         if(localStream){
-            console.log(localStream)
+
             const localVideo = localVideoRef.current;
             localVideo.srcObject = localStream;
 
@@ -18,8 +18,10 @@ const LocalVideoView = props =>{
     },[localStream])
 
     return(
-        <div className="h-[200px] w-[200px] mx-20">
-            <video className="w-full h-full" ref={localVideoRef} autoPlay muted></video>
+        <div>
+            <div className="w-full block">
+                <video className="w-[200px] float-right rounded-lg bg-[#30D5C8]" ref={localVideoRef} autoPlay muted></video>
+            </div>
         </div>
     )
 }

@@ -5,15 +5,30 @@ import { callStates, setCallRejected } from "../store/actions/callAction";
 import CallDialog from "../Components/CallDialogs/CallDialog";
 import IncomingCallDialog from "../Components/IncomingCallDialog/IncomingCallDialog";
 import CallRejectedDialog from "../Components/CallRejectedDialog/CallRejectedDialog";
+import { useEffect } from "react";
+import * as webRTCHandler from '../utils/webRTC/webRTCHandler'
+import store from "../store/store";
 
 function DoctorList(props){
 
-    const { callState,callerUsername,callingDialogVisible,callRejected,hideCallRejectedDialog } = props; 
+    useEffect(() => {
+        webRTCHandler.getLocalStream();
+    }, []);
+
+    const { 
+        callState,
+        callerUsername,
+        callingDialogVisible,
+        callRejected,
+        hideCallRejectedDialog 
+    } = props; 
 
     return(
         <div>
             <Navbar/>
-            <h1 className="text-center font-bold text-4xl">Active Doctors, ready to help!</h1>
+            <h1 className="text-center font-bold text-4xl">
+                {store.getState().dashboard.role == 'doctor' ? 'Active Patients': 'Active Doctors, ready to help!'}
+            </h1>
             <ActiveUsers/>
 
             {
@@ -21,7 +36,7 @@ function DoctorList(props){
             }
 
             {
-                (callState == callStates.CALL_REQUESTED) && <IncomingCallDialog callerUsername={callerUsername}/>
+                callState === callStates.CALL_REQUESTED && <IncomingCallDialog callerUsername={callerUsername}/>
             }
 
             { callRejected.rejected &&    

@@ -23,8 +23,8 @@ function App() {
           {/* Protected Routes */}
           <Route element={<PrivateRoutes/>}>
             <Route path='/' element={<Home/>}/>
-            <Route path='/findDoctors' element={<DoctorList/>}/>
-            <Route path='/consultation/:user' element={<Consultation/>}/>
+            <Route path='/find' element={<DoctorList/>}/>
+            <Route path='/consultation' element={<Consultation/>}/>
           </Route>
 
           <Route path='/about' element={<About/>}/>

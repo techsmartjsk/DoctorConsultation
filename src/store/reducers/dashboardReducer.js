@@ -2,7 +2,9 @@ import * as dashboardActions from '../actions/DashboardActions'
 
 const initState = {
     username:'',
-    activeUsers:[]
+    activeUsers:[],
+    name:'',
+    role:''
 }
 
 
@@ -20,7 +22,18 @@ const reducer = (state = initState,action) =>{
                 ...state,
                 activeUsers: action.activeUsers
             }
-    
+
+        case dashboardActions.DASHBOARD_SET_NAME:
+            return{
+                ...state,
+                name:action.name
+            }
+
+        case dashboardActions.DASHBOARD_SET_USER_ROLE:
+            return{
+                ...state,
+                role:action.role
+            }
         default:
             return state
     }

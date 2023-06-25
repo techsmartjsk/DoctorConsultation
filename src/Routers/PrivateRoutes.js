@@ -3,9 +3,9 @@ import Cookies from "js-cookie";
 import { useEffect, useState } from "react"
 import { connect } from "react-redux";
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
-import { setUsername } from "../store/actions/DashboardActions";
+import { setName, setUserRole, setUsername } from "../store/actions/DashboardActions";
 
-function PrivateRoutes({saveUsername}){
+function PrivateRoutes({saveUsername, saveName, saveUserRole}){
     const [isAuth,setIsAuth] = useState()
     const { REACT_APP_API_ENDPOINT } = process.env;
     const token = Cookies.get('token')
@@ -18,11 +18,12 @@ function PrivateRoutes({saveUsername}){
                     Authorization:`Bearer ${token}`
                 }
             }).then((res)=>{
-                console.log(res.data['username'])
+                console.log(res)
                 setIsAuth(true)
                 saveUsername(res.data['username'])
+                saveName(res.data['name'])
+                saveUserRole(res.data['role'])
             }).catch((e)=>{
-                console.log(e)
                 setIsAuth(false)
             })
         }else{
@@ -43,7 +44,9 @@ function PrivateRoutes({saveUsername}){
 
 const mapActionsToProps = (dispatch) =>{
     return{
-        saveUsername: username=> dispatch(setUsername(username))
+        saveUsername: username => dispatch(setUsername(username)),
+        saveName: name => dispatch(setName(name)),
+        saveUserRole: role => dispatch(setUserRole(role))
     }
 }
 

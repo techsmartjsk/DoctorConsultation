@@ -8,7 +8,11 @@ const initState = {
     callRejected:{
         rejected:false,
         reason:''
-    }
+    },
+    remoteStream:null,
+    localCameraEnabled:true,
+    localMicrophoneEnabled:true,
+    screenSharingActive:false, 
 }
 
 
@@ -43,6 +47,30 @@ const callReducer = (state = initState,action) =>{
             return{
                 ...state,
                 callRejected:action.callRejected
+            }
+
+        case callAction.CALL_SET_REMOTE_STREAM:
+            return{
+                ...state,
+                remoteStream:action.remoteStream
+            }
+        
+        case callAction.CALL_SET_LOCAL_CAMERA_ENABLED:
+            return{
+                ...state,
+                localCameraEnabled:action.enabled
+            }
+        
+        case callAction.CALL_SET_LOCAL_MICROPHONE_ENABLED:
+            return{
+                ...state,
+                localMicrophoneEnabled:action.enabled
+            }
+
+        case callAction.CALL_SET_SCREEN_SHARING_ACTIVE:
+            return{
+                ...state,
+                screenSharingActive:action.active
             }
         default:
             return state

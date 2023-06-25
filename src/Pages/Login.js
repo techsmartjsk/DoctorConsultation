@@ -24,7 +24,6 @@ function Login({saveUsername}){
             setSuccess(true);
             Cookies.set('token',res.data['token'])
             toast.success('Logged In Successfully');
-            console.log(user)
             saveUsername(user)
             navigate('/')
         }else{

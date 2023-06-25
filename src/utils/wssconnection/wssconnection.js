@@ -23,12 +23,29 @@ export const connectionWithWebSocket = ()=>{
 
     //listeners for direct call
     socket.on('pre-offer',(data)=>{
-        console.log('Pre-Offer WSS',data)
+        console.log('Step 3')
         webRTCHandler.handlePreOffer(data)
     })
 
     socket.on('pre-offer-answer',(data)=>{
+        console.log(data)
         webRTCHandler.handlePreOfferAnswer(data)
+    })
+
+    socket.on('webRTC-offer',(data)=>{
+        webRTCHandler.handleOffer(data);
+    })
+
+    socket.on('webRTC-answer',(data)=>{
+        webRTCHandler.handleAnswer(data)
+    })
+
+    socket.on('webRTC-candidate',(data)=>{
+        webRTCHandler.handleCandidate(data)
+    })
+
+    socket.on('user-hanged-up',() => {
+        webRTCHandler.handleUserHangedUp()
     })
 }
 
@@ -44,6 +61,10 @@ export const registerNewUser = (username) =>{
 }
 
 
+export const sendWebRTCCandidate = (data)=>{
+    socket.emit('webRTC-candidate',data)
+}
+
 //emitting events related to server with direct call
 export const sendPreOffer = (data)=>{
     socket.emit('pre-offer',data)
@@ -51,6 +72,18 @@ export const sendPreOffer = (data)=>{
 
 export const sendPreOfferAnswer = (data)=>{
     socket.emit('pre-offer-answer',data)
+}
+
+export const sendWebRTCOffer = (data)=>{
+    socket.emit('webRTC-offer',data)
+}
+
+export const sendWebRTCAnswer = (data) => {
+    socket.emit('webRTC-answer',data)
+}
+
+export const sendUserHangedUp = (data) => {
+    socket.emit('user-hanged-up',data);
 }
 
 const handleBroadcastEvents = (data) =>{

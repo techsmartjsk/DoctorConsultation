@@ -1,11 +1,12 @@
 import { FaUserDoctor } from 'react-icons/fa6'
 import { useNavigate } from 'react-router-dom';
-import { callToOtherUser } from '../utils/webRTC/webRTCHandler';
+import * as webRTCHandler from '../utils/webRTC/webRTCHandler'
+import { useEffect } from 'react';
 function ActiveUserItem({key, user}){
     const navigate = useNavigate()
     const handleItemPressed = ()=>{
-        callToOtherUser(user)
-        navigate(`/consultation/${user.username}`)
+        webRTCHandler.callToOtherUser(user)
+        navigate(`/consultation`)
     }
     return(
         <div onClick={handleItemPressed} className="mx-20 cursor-pointer bg-gray-200 p-4 rounded-md hover:bg-white">

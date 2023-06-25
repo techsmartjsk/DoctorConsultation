@@ -16,8 +16,8 @@ const RemoteVideoView = props =>{
     },[remoteStream])
 
     return(
-        <div>
-            <video className="w-full h-full" ref={remoteVideoRef} autoPlay></video>
+        <div className="w-screen pl-[300px] pr-[300px] pt-10">
+            <video className="w-full h-[500px] mx-auto rounded-lg bg-[#30D5C8]" ref={remoteVideoRef} autoPlay></video>
         </div>
     )
 }

@@ -4,30 +4,59 @@ import RemoteVideoView from "../RemoteVideoView/RemoteVideoView";
 import IncomingCallDialog from "../IncomingCallDialog/IncomingCallDialog";
 import CallDialog from "../CallDialogs/CallDialog"
 import CallRejectedDialog from "../CallRejectedDialog/CallRejectedDialog";
-import { callStates, setCallRejected } from "../../store/actions/callAction";
+import { callStates, setCallRejected, setLocalCameraEnabled, setLocalMicrophoneEnabled } from "../../store/actions/callAction";
+import Navbar from "../Navbar";
+import ConversationButtons from "../ConversationButtons/ConversationButtons";
 const DirectCall = (props)=>{
 
-    const { localStream, remoteStream,callState,callerUsername,callingDialogVisible, callRejected, hideCallRejectedDialog } = props; 
+
+    const { 
+        localStream, 
+        remoteStream,
+        callState,
+        callerUsername,
+        callingDialogVisible, 
+        callRejected, 
+        hideCallRejectedDialog
+    } = props; 
+
     return(
         <>
-            <LocalVideoView localStream={localStream}/>
-            {
-                remoteStream && 
-                <RemoteVideoView remoteStream={remoteStream} />
-            }
+            <Navbar/>
+            <h1 className="text-center text-4xl">Doctor Video Consultation in Progress</h1>
+            <div className="pl-10 pr-10">
 
-            {
-                callingDialogVisible && <CallDialog/>
-            }
+                
+                <LocalVideoView localStream={localStream}/>
+                {
+                    remoteStream && 
+                    callState == callStates.CALL_IN_PROGRESS &&
+                    <RemoteVideoView remoteStream={remoteStream} />
+                }
 
-            {
-                (callState == callStates.CALL_REQUESTED) && <IncomingCallDialog callerUsername={callerUsername}/>
-            }
+                { 
+                    callRejected.rejected &&  <CallRejectedDialog 
+                    reason={callRejected.reason}
+                    hideCallRejectedDialog={hideCallRejectedDialog}
+                    />
+                }
+
+                {
+                    callingDialogVisible && <CallDialog/>
+                }
+
+                {
+                    callState == callStates.CALL_REQUESTED && <IncomingCallDialog callerUsername={callerUsername}/>
+                }
+
+                {
+                    remoteStream && 
+                    callState == callStates.CALL_IN_PROGRESS &&
+                    <ConversationButtons {...props}/>
+                }
+
+            </div>
              
-            { callRejected.rejected &&    <CallRejectedDialog 
-            reason={callRejected.reason}
-            hideCallRejectedDialog={hideCallRejectedDialog}
-            />}
         </>
     )
 }
@@ -40,7 +69,9 @@ function mapStoreStatesToProps({call}){
 
 function mapDispatchToProps(dispatch){
     return{
-        hideCallRejectedDialog:(callRejectionDetails)=> dispatch(setCallRejected(callRejectionDetails))
+        hideCallRejectedDialog:(callRejectionDetails)=> dispatch(setCallRejected(callRejectionDetails)),
+        setCameraEnabled:(enabled)=>dispatch(setLocalCameraEnabled(enabled)),
+        setMicrophoneEnabled:(enabled)=>dispatch(setLocalMicrophoneEnabled(enabled))
     }
 }
 
