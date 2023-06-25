@@ -50,6 +50,7 @@ export default function Navbar(){
                 className="p-2 border text-sm rounded-full w-[300px] border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300"
                 />
                 <a href="/about" className="hover:bg-white hover:text-[#055875] p-2 rounded-full">About Us</a>
+                <a href="/dataVisualisation" className="hover:bg-white hover:text-[#055875] p-2 rounded-full">Visualise Data</a>
                 {
                     !auth ? <div className="flex gap-4">
                     <a href="/signup" className="bg-white rounded-full hover:bg-[#30D5C8] hover:text-white text-[#30D5C8] px-4 py-2">

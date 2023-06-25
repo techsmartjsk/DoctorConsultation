@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import { connectionWithWebSocket } from './utils/wssconnection/wssconnection';
 import DoctorList from './Pages/DoctorList';
 import Consultation from './Pages/Consultation'
+import DoctorData from './Pages/DoctorData';
 
 function App() {
   useEffect(()=>{
@@ -25,6 +26,7 @@ function App() {
             <Route path='/' element={<Home/>}/>
             <Route path='/find' element={<DoctorList/>}/>
             <Route path='/consultation' element={<Consultation/>}/>
+            <Route path='/dataVisualisation' element={<DoctorData/>}/>
           </Route>
 
           <Route path='/about' element={<About/>}/>
