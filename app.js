@@ -28,12 +28,12 @@ app.use(bodyParser.json());
 
 
 app.post('/register', (req, res) => {
-    const { username, password } = req.body;
+    const { name, username, password, role } = req.body;
 
     bcrypt.hash(password, 10, (err, hashedPassword) => {
         if (err) throw err;
 
-        const user = { username, password: hashedPassword };
+        const user = { name, username, password: hashedPassword , role };
 
         connection.query('INSERT INTO users SET ?', user, (err, result) => {
         if (err) throw err;
@@ -58,7 +58,7 @@ connection.query('SELECT * FROM users WHERE username = ?', username, (err, resul
         if (err) throw err;
 
         if (match) {
-        const token = jwt.sign({ username: user.username }, 'MajorProjectDB');
+        const token = jwt.sign({ username: user.username, name: user.name, role: user.role }, 'MajorProjectDB');
 
         res.json({ token });
         } else {
@@ -89,9 +89,9 @@ app.get('/check-token', (req, res) => {
       if (err) {
         return res.status(401).json({ message: 'Invalid token' });
       }
-      const { username } = decoded;
+      const { username, name, role } = decoded;
   
-      res.status(200).json({ message: 'Token is valid', username });
+      res.status(200).json({ message: 'Token is valid',username, name, role });
     });
 });  
 
@@ -144,8 +144,32 @@ io.on('connection',(socket)=>{
   })
 
   socket.on('pre-offer-answer',(data)=>{
-    io.to(data.callersocketId).emit('pre-offer-answer',{
+    io.to(data.callerSocketId).emit('pre-offer-answer',{
       answer:data.answer
     })
+  })
+
+  socket.on('webRTC-offer',(data)=>{
+    io.to(data.calleeSocketId).emit('webRTC-offer',{
+      offer:data.offer
+    })
+  })
+
+  socket.on('webRTC-answer',(data)=>{
+    console.log('handling webRTC answer')
+    io.to(data.callerSocketId).emit('webRTC-answer',{
+      answer:data.answer
+    })
+  })
+
+  socket.on('webRTC-candidate',(data)=>{
+    console.log('handling ice candidate')
+    io.to(data.connectedUserSocketId).emit('webRTC-candidate',{
+      candidate:data.candidate
+    })
+  })
+
+  socket.on('user-hanged-up',(data)=>{
+    io.to(data.connectedUserSocketId).emit('user-hanged-up')
   })
 })
